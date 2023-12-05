@@ -17,5 +17,5 @@ with open('Reference.md', 'r', encoding="UTF-8") as f:
 
 with open("Catalog.md", 'w', encoding="UTF-8") as f:
     for title, title_level in title_list:
-        f.write("  " * (title_level - 1) + "* [" + title + "](#" + title.replace(" ", "-").replace(":", "").replace("?", "").replace("!", "").replace(".", "").
+        f.write("  " * (title_level - 1) + "* [" + title + "](./Reference.md#" + title.replace(" ", "-").replace(":", "").replace("?", "").replace("!", "").replace(".", "").
                 replace(",", "").replace(";", "").replace("(", "").replace(")", "").replace("/", "").replace("\\", "").replace("'", "").replace('"', "").lower() + ")\n")
