@@ -184,7 +184,72 @@ static void GPIO_init(void)
 
 ### 硬件通用定时器
 
+硬件定时器资源很少，比如esp32c3的通用定时器只有2个
+
 参见[硬件定时器例子](./example/basic/TIM_hardware.c)
 
 ### ESP定时器
 
+可以参考[ESP定时器例子](./example/basic/TIM_esp.c)
+
+```c
+// 回调函数
+static void periodic_timer_callback(void *arg)
+{
+    int64_t time_since_boot = esp_timer_get_time();
+    ESP_LOGI(TAG, "Periodic timer called  , time since boot: %lld us", time_since_boot);
+}
+
+void esp_init()
+{
+    // 创建esp定时器对象
+    const esp_timer_create_args_t periodic_timer_args = {
+        /*设置回调函数*/
+        .callback = &periodic_timer_callback,
+        /*设置回调函数的参数*/
+        .arg = (void *)count,
+        .name = "periodic"};
+    esp_timer_handle_t periodic_timer;
+    esp_timer_create(&periodic_timer_args, &periodic_timer);
+
+    /*单次或循环的两个API*/
+    // esp_timer_start_once(periodic_timer, 5000000); // 5s
+    esp_timer_start_periodic(periodic_timer, 500000); // 500ms
+}
+
+```
+
+### FreeRTOS定时器
+
+```c
+#include "freertos/timers.h"
+
+// 回调函数
+void vTimerCallback(TimerHandle_t pxTimer)
+{
+    static BaseType_t xCount = 0;
+    xCount++;
+    ESP_LOGI(TAG, "Timer callback!   Count:%d", xCount);
+}
+
+// 创建定时器、启动
+void TIM_init(void)
+{
+    // 如果成功创建了计时器，则返回新创建的计时器的句柄
+    TimerHandle_t tim = xTimerCreate(
+        "vTimerCallback", // 名称
+        100,              // 周期时长 系统滴答数
+        pdTRUE,           // 是否重新加载，pdFALSE为单次调用
+        0,                // pvTimerID
+        vTimerCallback    // 定义的定时器回调函数
+    );
+    xTimerStart(tim, 0); // 激活成功返回 pdPASS
+    // 第1个参数：软件计时器的句柄
+    // 第2个参数：指定在调用xTimerStart（）时，如果队列已满，
+    // 则调用任务应保持在“阻塞”状态
+    // 以等待开始命令成功发送到计时器命令队列的时间（以秒为单位）。
+}
+
+```
+
+## 
