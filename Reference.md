@@ -186,4 +186,5 @@ static void GPIO_init(void)
 
 参见[硬件定时器例子](./example/basic/TIM_hardware.c)
 
-### 软件定时器
+### ESP定时器
+
