@@ -22,7 +22,7 @@ void Task1(void *pvParam)
         emptySpace = uxSemaphoreGetCount(semphrHandle);
         ESP_LOGI(TAG, "剩余%d\n", emptySpace);
 
-        // 取得当前信号量,如果信号量为0则获取失败
+        // 立刻取得当前信号量并返回,如果信号量为0则获取失败
         iResult = xSemaphoreTake(semphrHandle, 0);
 
         if (iResult == pdPASS)
