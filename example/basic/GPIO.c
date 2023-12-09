@@ -5,7 +5,40 @@
 #include "driver/gpio.h"
 #include "esp_log.h"
 
-static void GPIO_init(void)
+// 第一种初始化方法
+static void GPIO_init1(void)
+{
+    gpio_config_t ioConfig = 
+    {
+        // 开启3、4号引脚
+        .pin_bit_mask = (1ull << 3) | (1ull << 4),
+        // 设置模式
+        .mode = GPIO_MODE_OUTPUT,
+        /*
+        模式如下
+        GPIO_MODE_DISABLE           --- 禁用
+        GPIO_MODE_INPUT             --- 输入
+        GPIO_MODE_OUTPUT            --- 输出
+        GPIO_MODE_OUTPUT_OD         --- 输出开漏
+        GPIO_MODE_INPUT_OUTPUT_OD   --- 输入输出开漏
+        GPIO_MODE_INPUT_OUTPUT      --- 输入输出
+        */
+
+        // 拉高拉低
+        .pull_up_en = GPIO_PULLUP_DISABLE,
+        .pull_down_en = GPIO_PULLDOWN_DISABLE,
+        /*
+        仅有xxx_DISABLE和xxx_ENABLE两种
+        */
+
+        // 中断，后面提到
+        .intr_type = GPIO_INTR_DISABLE,
+    };
+    gpio_config(&ioConfig);
+}
+
+// 第二种初始化方法
+static void GPIO_init2(void)
 {
     // GPIO 3
     gpio_reset_pin(GPIO_NUM_3);
@@ -37,7 +70,7 @@ static void GPIO_init(void)
 
 void app_main(void)
 {
-    GPIO_init();
+    GPIO_init2();
     int level;
     while (1)
     {
