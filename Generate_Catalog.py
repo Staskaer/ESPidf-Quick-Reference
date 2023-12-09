@@ -23,6 +23,7 @@ with open("README.md", 'r+', encoding="UTF-8") as f:
             break
         if "目录" in line:
             f.seek(f.tell())
+            f.truncate()
             break
     f.write("\n\n")
     for title, title_level in title_list:
