@@ -30,7 +30,8 @@ vTaskDelay(500 / portTICK_PERIOD_MS);
 由于ESP-IDF是基于FreeRTOS的，所以FreeRTOS的API也可以直接使用，所以这里也会把FreeRTOS的常用API列出来。
 
 ## FreeRTOS任务
-https://blog.csdn.net/qq_44817843/article/details/112145971
+
+这里是与freeRtos相关的一些基本的常用操作，与esp-idf关系不会特别大。
 
 ### 不指定CPU创建任务(FreeRtos)
 
