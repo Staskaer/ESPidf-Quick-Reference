@@ -21,7 +21,7 @@ with open("README.md", 'r+', encoding="UTF-8") as f:
         line = f.readline()
         if not line:
             break
-        if "目录" in line:
+        if "目录" in line[:5]:
             f.seek(f.tell())
             f.truncate()
             break

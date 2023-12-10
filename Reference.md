@@ -291,6 +291,8 @@ value = gpio_get_level(GPIO_NUM_3);
 
 ## GPIO中断
 
+参见[GPIO中断例子](./example/basic/GPIO_interrupt.c)
+
 ### 开启中断
 
 同样有两种方法
@@ -346,7 +348,7 @@ static void GPIO_init(void)
 
 需要使用`gpio_install_isr_service`函数来初始化中断服务，然后使用`gpio_isr_handler_add`函数来注册中断服务函数。在中断服务函数里不能用`ESP_LOGI`等输出日志，否则会直接coredump。
   
-参见[GPIO中断例子](./example/basic/GPIO_interrupt.c)
+
 
 ## 定时器
 
@@ -388,3 +390,83 @@ void esp_init()
 }
 
 ```
+
+
+## pwm
+
+### 生成两路pwm
+
+可以参考[pwm例子](./example/basic/pwm.c)
+
+```c
+// 先初始化pwm对应的定时器
+static const ledc_timer_config_t lcd_bl_ledc_timer = 
+{
+    .duty_resolution = LEDC_TIMER_10_BIT, // LEDC驱动器占空比精度
+    .freq_hz = 2000,                      // PWM频率
+    .speed_mode = LEDC_LOW_SPEED_MODE,    // 选择PWM频率的方式，有高速和低速两种
+    .timer_num = LEDC_TIMER_0,            // ledc使用的定时器编号。若需要生成多个频率不同的PWM信号，则需要指定不同的定时器
+    /*
+    一共有4个timer，通过总线矩阵对应到8个GPIO输出上
+    一个timer可以对应多个channel，但是一个channel只能对应一个timer
+    因此，8个channel最多有4种不同频率的pwm输出
+    */
+    .clk_cfg = LEDC_AUTO_CLK, // 自动选择定时器的时钟源
+    /*
+    LEDC_AUTO_CLK：自动选择定时器的时钟源
+    LEDC_USE_APB_CLK：使用APB时钟作为定时器时钟源，APB时钟为80MHz
+    LEDC_USE_RTC8M_CLK：使用RTC8M时钟作为定时器时钟源，RTC8M时钟为8MHz
+    LEDC_USE_REF_TICK：使用REF_TICK时钟作为定时器时钟源，REF_TICK时钟为1MHz
+    */
+};
+
+/* 初始化定时器1，将初始化好的定时器编号传给ledc通道初始化函数即可 */
+ledc_timer_config(&lcd_bl_ledc_timer);
+
+
+// 然后初始化对应通道和GPIO
+ledc_channel_config_t lcd_bl_ledc_channel0 = 
+{
+    .channel = LEDC_CHANNEL_0,         // LED使用通道0
+    .duty = 0,                         // 占空比0
+    .gpio_num = 3,                     // 连接LED的IO
+    .speed_mode = LEDC_LOW_SPEED_MODE, // 速率
+    .hpoint = 0,                       // 没啥用，不用管
+    .timer_sel = LEDC_TIMER_0,         // 使用上面初始化过的定时器
+};
+ledc_channel_config(&lcd_bl_ledc_channel0);
+
+
+/* 设定PWM占空比 */
+ledc_set_duty(LEDC_LOW_SPEED_MODE, channel, brightness * 10);
+
+/* 更新PWM占空比输出 */
+ledc_update_duty(LEDC_LOW_SPEED_MODE, channel);
+```
+
+### pwm控制sg90舵机
+
+通过配置相关的pwm参数即可完成控制，参考[舵机例子](./example/basic/pwm_servo.c)
+
+## UART【暂无】
+
+## ADC【暂无】
+
+## IIC【暂无】
+
+## DAC【暂无】
+
+## SPI【暂无】
+
+
+# 无线通信
+
+## WIFI【暂无】
+https://blog.csdn.net/qq_53381910/article/details/130955500
+## 蓝牙【暂无】
+
+# 应用层协议
+
+## HTTP【暂无】
+
+## MQTT【暂无】
