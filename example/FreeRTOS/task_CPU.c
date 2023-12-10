@@ -24,14 +24,6 @@ void app_main(void)
 
     int num = 1;
 
-    // xTaskCreate(
-    //     Task1,        // 定义的任务函数
-    //     "Task1",      // 任务名称
-    //     2048,         // 任务堆栈，使用ESP_LOG的话，太小了直接core dump
-    //     (void *)&num, // 输入参数
-    //     2,            // 优先级 0-31，0为空闲任务
-    //     &xHandle1     // 绑定任务句柄 如果不删除或不检测任务自身信息 也可以不填入句柄直接为 NULL
-    // );
     xTaskCreatePinnedToCore(
         Task1,         // 定义的任务函数
         "Task1",       // 任务名称
