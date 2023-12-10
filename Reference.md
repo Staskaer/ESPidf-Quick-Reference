@@ -448,7 +448,69 @@ ledc_update_duty(LEDC_LOW_SPEED_MODE, channel);
 
 通过配置相关的pwm参数即可完成控制，参考[舵机例子](./example/basic/pwm_servo.c)
 
-## UART【暂无】
+## UART
+
+可以直接使用串口来读取发送数据，也可以通过事件回调的方式来使用串口。
+
+### 直接使用串口
+
+可以参考[串口例子](./example/basic/uart.c)
+
+```c
+#include "driver/uart.h"
+/*安装uart的驱动
+第一个参数选择使用的第几个串口
+第二个参数是接收缓冲区的大小，字节为单位
+第三个参数是发送缓冲区的大小，字节为单位
+第四第五个参数是事件相关的，参见下一个使用事件的例子
+最后一个是中断，这里不分配
+*/
+uart_driver_install(UART_NUM_1, 2048, 0, 0, NULL, 0);
+
+
+/*初始化串口*/
+uart_config_t uart_config = {
+    /*波特率*/
+    .baud_rate = 115200,
+    /*数据位*/
+    .data_bits = UART_DATA_8_BITS,
+    /*校验*/
+    .parity = UART_PARITY_DISABLE,
+    /*停止位*/
+    .stop_bits = UART_STOP_BITS_1,
+    /*串口(cts/rts)相关，不管即可*/
+    .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
+    /*时钟源，两种可选：UART_SCLK_APB(默认，也就是UART_SCLK_DEFAULT)、UART_SCLK_REF_TICK*/
+    .source_clk = UART_SCLK_DEFAULT,
+};
+/*这里把使用的串口完成配置*/
+uart_param_config(UART_NUM_1, &uart_config);
+
+/*然后去配置这个串口的引脚
+第一个参数是使用的串口，需要和前面两个设置保持一致
+第二个参数是TXD的引脚号，如果使用默认的，就填UART_PIN_NO_CHANGE
+第三个参数是RXD的引脚号，如果使用默认的，就填UART_PIN_NO_CHANGE
+最后两个参数是cts/rts相关，不管即可，填UART_PIN_NO_CHANGE
+*/
+uart_set_pin(UART_NUM_1,
+                GPIO_NUM_3,
+                GPIO_NUM_4,
+                UART_PIN_NO_CHANGE,
+                UART_PIN_NO_CHANGE);
+
+// 分配缓冲区
+uint8_t data[1024];
+// 读取串口数据
+int len = uart_read_bytes(UART_NUM_1, &data, (1024 - 1), 20 / portTICK_PERIOD_MS);
+// 发送串口数据
+uart_write_bytes(UART_NUM_1, &data, len);
+```
+
+### 通过事件来使用串口
+
+这个稍微有点复杂，可以参考[串口事件例子](./example/basic/uart_event.c)
+
+这里的事件会被内置的中断处理，需要使用一个单独的任务来处理串口事件，主要是多了一个检测某条命令的末尾是不是有特定字符重复特定次数的功能。
 
 ## ADC【暂无】
 
@@ -462,7 +524,7 @@ ledc_update_duty(LEDC_LOW_SPEED_MODE, channel);
 # 无线通信
 
 ## WIFI【暂无】
-https://blog.csdn.net/qq_53381910/article/details/130955500
+
 ## 蓝牙【暂无】
 
 # 应用层协议

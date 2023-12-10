@@ -49,3 +49,6 @@
   * [pwm](./Reference.md#pwm)
     * [生成两路pwm](./Reference.md#生成两路pwm)
     * [pwm控制sg90舵机](./Reference.md#pwm控制sg90舵机)
+  * [UART](./Reference.md#uart)
+    * [直接使用串口](./Reference.md#直接使用串口)
+    * [通过事件来使用串口](./Reference.md#通过事件来使用串口)
