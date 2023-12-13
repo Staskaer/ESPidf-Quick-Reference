@@ -60,7 +60,7 @@ void wifi_init_sta(void)
     // 配置sta连接的ap的ssid和passwd，并启动wifi
     wifi_config_t wifi_config = {
         .sta = {
-            .ssid = "ppxxxg22",
+            .ssid = "test_wifi",
             .password = "12345678910",
         },
     };
