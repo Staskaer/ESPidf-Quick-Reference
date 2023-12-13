@@ -523,12 +523,66 @@ uart_write_bytes(UART_NUM_1, &data, len);
 
 # 无线通信
 
-## WIFI【暂无】
+## WIFI
+
+### AP
+
+建议直接参考[AP例子](./example/wireles/wifi/soft_ap.c)，整个操作较多。
+
+### STA
+
+建议直接参考[扫描例子](./example/wireles/wifi/sta.c)，与ap相类似，初始化相关较多。
+
+### STA扫描
+
+参考[扫描例子](./example/wireles/wifi/scan.c)，在配置成STA的模式后调用相关函数来扫描AP
+
+```c
+// 扫描结果存放
+wifi_ap_record_t ap_info[16];
+
+/*作为sta启动*/
+esp_wifi_set_mode(WIFI_MODE_STA);
+esp_wifi_start();
+
+// 开始扫描
+/*
+第一个参数数扫描配置wifi_scan_config_t，可以配置扫描
+比如只扫描选定的信道等等，没有要求则位NULL
+第二个参数是是否阻塞
+*/
+esp_wifi_scan_start(NULL, true);
+
+/*
+获取扫描结果并存放于之前创建的列表中
+*/
+esp_wifi_scan_get_ap_records(&number, ap_info);
+
+// 可以通过遍历方式来获取到每个ap的信道、ssid等信息
+```
+
+### STA静态IP与DNS
+
+请直接参考参考[静态IP例子](./example/wireles/wifi/sta_static.c)，内容较长。
+
 
 ## 蓝牙【暂无】
+
+## ESP-Now【暂无】
 
 # 应用层协议
 
 ## HTTP【暂无】
 
+
+## HTTPS【暂无】
+
 ## MQTT【暂无】
+
+# 杂项
+
+## 事件循环机制【暂无】
+
+## 电源管理【暂无】
+
+### wifi与省电模式
