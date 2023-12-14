@@ -98,7 +98,7 @@ void wifi_init_sta(void)
     // 配置wifi参数
     wifi_config_t wifi_config = {
         .sta = {
-            .ssid = "ppxxxg22",
+            .ssid = "test_wifi",
             .password = "12345678910",
             .threshold.authmode = WIFI_AUTH_WPA2_PSK,
         },
