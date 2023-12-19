@@ -566,6 +566,46 @@ esp_wifi_scan_get_ap_records(&number, ap_info);
 请直接参考参考[静态IP例子](./example/wireles/wifi/sta_static.c)，内容较长。
 
 
+## TCP&UDP
+
+### WIFI连接后的TCP-Client
+
+一般都是先连接好WIFI，然后TCP再基于此进行相互通信，可以查看[例子](./example/wireles/socket/TCP_client.c)，当然在使用前也需要完成"网卡"、事件循环、nvs分区的初始化操作
+
+```c
+char host_ip[] = "192.168.43.65";
+
+// 创建一个ipv4的地址
+struct sockaddr_in dest_addr;
+// 把字符串类型的地址赋值，并设置类型为TCP(AF_INET)
+inet_pton(AF_INET, host_ip, &dest_addr.sin_addr);
+dest_addr.sin_family = AF_INET;
+// 这里设置对应的端口号
+dest_addr.sin_port = htons(8899);
+
+// 然后创建对应的socket
+int addr_family = AF_INET;
+int ip_protocol = IPPROTO_IP;
+int sock = socket(addr_family, SOCK_STREAM, ip_protocol);
+
+// 连接并检查socket
+int err = connect(sock, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
+// 在连接时容易发生错误
+if (err != 0)
+{
+    ESP_LOGE(TAG, "Socket unable to connect: errno %d", errno);
+    return;
+}
+```
+
+### WIFI连接后的TCP-Server
+
+首先还是需要连接上WIFI，然后在esp32上创建一个监听socket，一旦有数据传输进来就再创建一个用于传输的socket用于通信，这里涉及到了一些LWIP库相关的参数，整体也相对复杂，并且在配置时很容易出错，建议直接参考[例子](./example/wireles/socket/TCP_server.c)
+
+### WIFI连接后的UDP-Client【暂无】
+
+### WIFI连接后的UDP-Server【暂无】
+
 ## 蓝牙【暂无】
 
 ## ESP-Now【暂无】
@@ -573,6 +613,7 @@ esp_wifi_scan_get_ap_records(&number, ap_info);
 # 应用层协议
 
 ## HTTP【暂无】
+https://blog.csdn.net/qq_53381910/article/details/130955500
 
 
 ## HTTPS【暂无】
@@ -585,4 +626,6 @@ esp_wifi_scan_get_ap_records(&number, ap_info);
 
 ## 电源管理【暂无】
 
-### wifi与省电模式
+### wifi与省电模式【暂无】
+
+## 控制台【暂无】
