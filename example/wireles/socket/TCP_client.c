@@ -11,6 +11,9 @@
 #include "esp_event.h"
 #include "esp_wifi.h"
 
+#define wifi_ssid "wifi_test"
+#define wifi_passwd "12345678910"
+
 static const char *TAG = "example";
 static const char *payload = "Message from ESP32 ";
 
@@ -65,8 +68,8 @@ void wifi_init_sta(void)
     // 配置sta连接的ap的ssid和passwd，并启动wifi
     wifi_config_t wifi_config = {
         .sta = {
-            .ssid = "test_wifi",
-            .password = "12345678910",
+            .ssid = wifi_ssid,
+            .password = wifi_passwd,
         },
     };
     esp_wifi_set_mode(WIFI_MODE_STA);
