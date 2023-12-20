@@ -11,6 +11,7 @@
 #include "esp_event.h"
 #include "esp_wifi.h"
 
+/*这里配置wifi的ssid与密码*/
 #define wifi_ssid "wifi_test"
 #define wifi_passwd "12345678910"
 
