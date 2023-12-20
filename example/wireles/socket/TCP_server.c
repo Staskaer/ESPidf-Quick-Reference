@@ -14,6 +14,10 @@
 #include <lwip/netdb.h>
 #include "esp_wifi.h"
 
+/*这里配置wifi的ssid与密码*/
+#define wifi_ssid "ppxxxg22"
+#define wifi_passwd "12345678910"
+
 static const char *TAG = "example";
 
 /* 这里两个函数是连接wifi的
@@ -66,8 +70,8 @@ void wifi_init_sta(void)
     // 配置sta连接的ap的ssid和passwd，并启动wifi
     wifi_config_t wifi_config = {
         .sta = {
-            .ssid = "test_wifi",
-            .password = "12345678910",
+            .ssid = wifi_ssid,
+            .password = wifi_passwd,
         },
     };
     esp_wifi_set_mode(WIFI_MODE_STA);
