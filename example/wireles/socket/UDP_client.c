@@ -94,7 +94,7 @@ static void udp_client_task(void *pvParameters)
     dest_addr.sin_addr.s_addr = inet_addr("192.168.43.65");
     dest_addr.sin_family = AF_INET;
     dest_addr.sin_port = htons(8899);
-    // 然后基于上述配置创建出socket
+    // 创建出一个UDP协议的socket
     int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
     if (sock < 0)
     {

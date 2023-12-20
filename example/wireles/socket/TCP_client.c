@@ -96,7 +96,7 @@ void tcp_client(void)
     // 这里设置对应的端口号
     dest_addr.sin_port = htons(8899);
 
-    // 然后创建对应的socket
+    // 然后创建一个TCP协议socket
     addr_family = AF_INET;
     ip_protocol = IPPROTO_IP;
     int sock = socket(addr_family, SOCK_STREAM, ip_protocol);
@@ -106,6 +106,7 @@ void tcp_client(void)
     // 等待wifi连接成功
     vTaskDelay(2000 / portTICK_PERIOD_MS);
 
+    // 把socket绑定到对应的配置上
     int err = connect(sock, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
     // 在连接时容易发生错误
     if (err != 0)

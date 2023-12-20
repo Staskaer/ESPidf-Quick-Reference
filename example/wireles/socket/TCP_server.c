@@ -167,7 +167,7 @@ static void tcp_server_task(void *pvParameters)
 
     ESP_LOGI(TAG, "Socket created");
 
-    // 把socket绑定在本机对应的端口上
+    // 把socket按照配置绑定在本机对应的端口上
     int err = bind(listen_sock, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
     if (err != 0)
     {
