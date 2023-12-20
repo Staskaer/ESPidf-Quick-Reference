@@ -602,9 +602,13 @@ if (err != 0)
 
 首先还是需要连接上WIFI，然后在esp32上创建一个监听socket，一旦有数据传输进来就再创建一个用于传输的socket用于通信，这里涉及到了一些LWIP库相关的参数，整体也相对复杂，并且在配置时很容易出错，建议直接参考[例子](./example/wireles/socket/TCP_server.c)
 
-### WIFI连接后的UDP-Client【暂无】
+### WIFI连接后的UDP-Client
 
-### WIFI连接后的UDP-Server【暂无】
+同样，一般是首先配置好wifi，然后配置socket，这些步骤与TCP基本一致，只有个别一些参数有所不同，可以参考[例子](./example/wireles/socket/UDP_client.c)
+
+### WIFI连接后的UDP-Server
+
+
 
 ## 蓝牙【暂无】
 
@@ -613,7 +617,7 @@ if (err != 0)
 # 应用层协议
 
 ## HTTP【暂无】
-https://blog.csdn.net/qq_53381910/article/details/130955500
+
 
 
 ## HTTPS【暂无】
