@@ -20,8 +20,8 @@
 
 static const char *TAG = "example";
 
-/* 这里两个函数是连接wifi的
-会连接到test_wifi里，并且假设该wifi内存在一台TCP-client，地址为192.168.43.65:8899
+/* 
+这里两个函数是连接wifi的
 */
 void sta_event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
