@@ -622,8 +622,54 @@ if (err != 0)
 
 发送Http的get请求，需要首先通过DNS来获取到域名的ip，然后才能建立连接并发送请求，整个代码相对较长，也需要先连接到wifi中，可以参考[例子](./example/application/http_client.c)
 
-
 ### HTTP-server
+
+创建http server来处理get和post请求，需要注册对用的回调函数即可，[例子](./example/application/http_server.c)
+
+```c
+/* http-server的handler
+此处定义一个用于处理get请求的handler，当收到get请求时，会调用此函数
+ */
+esp_err_t get_handler(httpd_req_t *req)
+{
+    /* 发送简单的响应数据包 */
+    const char resp[] = "Get Response";
+    httpd_resp_send(req, resp, strlen(resp));
+    return ESP_OK;
+}
+
+/* 启动 Web 服务器的函数 */
+void http_server_init(void)
+{
+    /*
+    get请求的回调函数，当使用get方法访问/目录时，会调用get_handler
+    */
+    httpd_uri_t uri_get = {
+        .uri = "/",
+        .method = HTTP_GET,
+        .handler = get_handler,
+        .user_ctx = NULL};
+
+    // 生成http的默认配置
+    httpd_config_t config = HTTPD_DEFAULT_CONFIG();
+
+    /* 创建一个server的handler */
+    httpd_handle_t server = NULL;
+
+    /* 启动 httpd server */
+    ESP_LOGI(TAG, "starting server!");
+    if (httpd_start(&server, &config) == ESP_OK)
+        /* 注册 URI 处理程序 */
+        httpd_register_uri_handler(server, &uri_get);
+    
+    /* 如果服务器启动失败，就停止server */
+    if (!server)
+    {
+        ESP_LOGE(TAG, "Error starting server!");
+        httpd_stop(server);
+    }
+}
+```
 
 
 ## HTTPS【暂无】
