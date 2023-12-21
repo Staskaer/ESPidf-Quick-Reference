@@ -608,7 +608,7 @@ if (err != 0)
 
 ### WIFI连接后的UDP-Server
 
-
+同上，与UDP-Client十分类似，可以参考[例子](./example/wireles/socket/UDP_server.c)
 
 ## 蓝牙【暂无】
 
@@ -616,8 +616,14 @@ if (err != 0)
 
 # 应用层协议
 
-## HTTP【暂无】
+## HTTP
 
+### HTTP-client
+
+发送Http的get请求，需要首先通过DNS来获取到域名的ip，然后才能建立连接并发送请求，整个代码相对较长，也需要先连接到wifi中，可以参考[例子](./example/application/http_client.c)
+
+
+### HTTP-server
 
 
 ## HTTPS【暂无】

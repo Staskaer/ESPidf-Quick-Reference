@@ -1,11 +1,3 @@
-/* HTTP GET Example using plain POSIX sockets
-
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
 #include <string.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -25,7 +17,7 @@
 #define wifi_ssid "test_wifi"
 #define wifi_passwd "12345678910"
 
-/* Constants that aren't configurable in menuconfig */
+/*配置访问的域名、端口和目录*/
 #define WEB_SERVER "www.baidu.com"
 #define WEB_PORT "80"
 #define WEB_PATH "/"
