@@ -514,11 +514,15 @@ uart_write_bytes(UART_NUM_1, &data, len);
 
 ## ADC【暂无】
 
-## IIC【暂无】
+## I2C【暂无】
 
 ## DAC【暂无】
 
 ## SPI【暂无】
+
+## I2S【暂无】
+
+## USB【暂无】
 
 
 # 无线通信
@@ -672,9 +676,59 @@ void http_server_init(void)
 ```
 
 
-## HTTPS【暂无】
+## MQTT
 
-## MQTT【暂无】
+首先需要配置好mqtt的服务端，然后在板子中配置好wifi，然后就可以使用mqtt发送数据来完成通信，同样是基于事件来完成的，可以参考[例子](./example/application/mqtt_client.c)
+
+```c
+/*mqtt事件回调函数*/
+static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data)
+{
+    esp_mqtt_event_handle_t event = event_data;
+    switch ((esp_mqtt_event_id_t)event_id)
+    {
+    case MQTT_EVENT_CONNECTED:
+        // mqtt连接到服务端
+        break;
+    case MQTT_EVENT_DATA:
+        // 订阅的话题有了数据
+        ESP_LOGI(TAG, "MQTT_EVENT_DATA");
+        printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
+        printf("DATA=%.*s\r\n", event->data_len, event->data);
+        break;
+    }
+}
+
+/*初始化mqtt，并返回一个mqtt的handler*/
+static esp_mqtt_client_handle_t mqtt_app_start(void)
+{
+    esp_mqtt_client_config_t mqtt_cfg = {
+        // mqtt的服务器地址和端口
+        .broker.address.uri = "mqtt://192.168.43.65",
+        .broker.address.port = 1883,
+
+        // 这个是mqtt的用户名
+        .credentials.username = "admin",
+
+        // 账号和密码，在mqtt服务端可以设置校验
+        .credentials.client_id = "public",
+        .credentials.authentication.password = "12345678910"};
+    // 初始化mqtt客户端
+    esp_mqtt_client_handle_t client = esp_mqtt_client_init(&mqtt_cfg);
+    // 注册任意的mqtt事件都使用同一个回调函数处理
+    esp_mqtt_client_register_event(client, ESP_EVENT_ANY_ID, mqtt_event_handler, NULL);
+    // 启动mqtt
+    esp_mqtt_client_start(client);
+
+    return client;
+}
+
+// 订阅话题
+esp_mqtt_client_subscribe(client, "topic1", 1);
+// 发布话题
+esp_mqtt_client_publish(client, "topic1", "topic1_data", 0, 0, 0);
+```
+
 
 # 杂项
 
