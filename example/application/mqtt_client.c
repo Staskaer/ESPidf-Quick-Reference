@@ -15,7 +15,7 @@
 #include "mqtt_client.h"
 
 /*这里配置wifi的ssid与密码*/
-#define wifi_ssid "ppxxxg22"
+#define wifi_ssid "test_wifi"
 #define wifi_passwd "12345678910"
 
 static const char *TAG = "example";
