@@ -10,7 +10,7 @@ with open('Reference.md', 'r', encoding="UTF-8") as f:
             break
         title_level = line.count('#')
         if title_level > 0:
-            if "include" in line:
+            if "include" in line or "define" in line or "if" in line or "else" in line:
                 continue
             title = line.strip('#').strip()
             title_list.append((title, title_level))
