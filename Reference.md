@@ -512,7 +512,153 @@ uart_write_bytes(UART_NUM_1, &data, len);
 
 这里的事件会被内置的中断处理，需要使用一个单独的任务来处理串口事件，主要是多了一个检测某条命令的末尾是不是有特定字符重复特定次数的功能。
 
-## ADC【暂无】
+## ADC
+
+### 无DMA的采样与校准
+
+ADC需要通过内置的efuse进行校准，ADC的默认量程为0-1.1v，所以根据不同的需要量程来配置对应的衰减，使用时可以直接读取对应通道数值，也可以读取校准后的数值，可以参考[ADC例子](./example/basic/ADC.c)
+
+```c
+/*这里只是初始化相关代码，校准相关参考对应文件*/
+
+// 初始化ADC1
+adc_oneshot_unit_handle_t adc1_handle;
+adc_oneshot_unit_init_cfg_t init_config1 = {
+    // 使用哪个ADC
+    .unit_id = ADC_UNIT_1,
+    // 设置是否支持 ADC 在 ULP (超低功耗)模式下工作
+    .ulp_mode = ADC_ULP_MODE_DISABLE};
+adc_oneshot_new_unit(&init_config1, &adc1_handle);
+
+// 配置ADC的采样设置
+adc_oneshot_chan_cfg_t config = {
+    /*
+    位宽，也就是精度相关
+    ADC_BITWIDTH_DEFAULT：默认位宽
+    ADC_BITWIDTH_9：9位精度
+    ...
+    ADC_BITWIDTH_12：12位精度
+    */
+    .bitwidth = ADC_BITWIDTH_DEFAULT,
+    /*配置衰减，是把输入电压缩小若干倍后送入ADC
+    不同的衰减倍数对应不同的检测电压范围，默认ADC的量程0-1.1V
+
+    ADC_ATTEN_DB_0：不衰减，测量范围为0-1.1V
+    ADC_ATTEN_DB_2_5：输入衰减2.5dB(量程*1.33)，测量范围为0-1.5V
+    ADC_ATTEN_DB_6：衰减6dB(量程*2)，测量范围为0-2.2V
+    ADC_ATTEN_DB_11：衰减11dB(量程*3.55)，测量范围为0-3.9V
+
+    这里配置成了ADC_ATTEN_DB_11，也就是最大量程
+    */
+    .atten = ADC_ATTEN_DB_11,
+};
+
+// 初始化两个通道，分别是2通道和3通道
+adc_oneshot_config_channel(adc1_handle, ADC_CHANNEL_2, &config);
+adc_oneshot_config_channel(adc1_handle, ADC_CHANNEL_3, &config);
+```
+
+### 通过DMA的连续采样
+
+首先需要配置dma的数据类型，由于不同芯片的支持的程度不一样，所以需要根据自己的芯片来配置。然后完成DMA和ADC对应通道的初始化，主要还是针对adc来进行初始化，在adc的初始化中指定对应的通道以dma来进行传输即可，可以参考[例子](./example/basic/ADC_DMA.c)
+
+```c
+/*
+这里配置DMA的类型，这里最好转到adc_digi_output_data_t里查看，比较混乱
+
+ADC_DIGI_OUTPUT_FORMAT_TYPE1：会从adc_digi_output_data_t->type1中获取数据
+ADC_DIGI_OUTPUT_FORMAT_TYPE2：会从adc_digi_output_data_t->type2中获取数据
+
+但是不同芯片的支持adc_digi_output_data_t结构是有差异的
+
+
+//////////// esp32与esp32s2 ////////////
+adc_digi_output_data_t数据结构体中有type1和type2，都是16位
+其中type1中12位数据位+4位通道标识位
+type2中11位数据位+4位通道标识位+1位adc标识位
+
+esp32：仅支持type1，且adc2不支持dma
+esp32s2：支持type1和type2，adc2支持dma，所以可以使用type2来分辨是哪个adc采集的数据
+
+//////////// esp32c3、h2、c2 ////////////
+adc_digi_output_data_t数据结构体仅有type2，是32位
+type2由12位数据位+3位通道位+1位adc标识位+16位保留位组成
+
+由于仅有一个type2，所以这些芯片仅支持ADC_DIGI_OUTPUT_FORMAT_TYPE2
+
+//////////// esp32s3 ////////////
+adc_digi_output_data_t数据结构体仅有type2，是32位
+type2由12位数据位+4位通道位+1位adc标识位+15位保留位组成
+
+由于仅有一个type2，所以这些芯片仅支持ADC_DIGI_OUTPUT_FORMAT_TYPE2
+
+
+//////////// else ////////////
+但是adc_digi_output_data_t是对齐的，所以只需要在初始化的时候关注就好了
+
+这里是c3，所以使用的是type2的三个宏，分别定义了type2时的通道获取、数据获取、adc单元获取
+如果是type1的话，就是type1.channel、type1.data两种数据可以获取
+*/
+#if CONFIG_IDF_TARGET_ESP32 || CONFIG_IDF_TARGET_ESP32S2
+#define ADC_DMA_OUTPUT_TYPE ADC_DIGI_OUTPUT_FORMAT_TYPE1
+#define ADC_GET_CHANNEL(p_data) ((p_data)->type1.channel)
+#define ADC_GET_DATA(p_data) ((p_data)->type1.data)
+#else
+#define ADC_DMA_OUTPUT_TYPE ADC_DIGI_OUTPUT_FORMAT_TYPE2
+#define ADC_GET_CHANNEL(p_data) ((p_data)->type2.channel)
+#define ADC_GET_DATA(p_data) ((p_data)->type2.data)
+#define EXAMPLE_ADC_GET_UNIT(p_data) ((p_data)->type2.unit)
+#endif
+
+/*
+配置ADC_DMA的最大存储缓冲区大小和每个转换帧大小
+*/
+adc_continuous_handle_cfg_t adc_config = {
+    .max_store_buf_size = 1024,
+    .conv_frame_size = 256,
+};
+adc_continuous_new_handle(&adc_config, &handle);
+
+/* 上面配置好了ADC_DMA的模式，下面来配置每一个ADC IO的采样配置
+sample_freq_hz：采样频率，这里是20KHz
+conv_mode：转换模式，这里是ADC_CONV_SINGLE_UNIT_1，也就是只使用ADC1
+format：DMA输出格式，这里是ADC_DIGI_OUTPUT_FORMAT_TYPE2，也就是type2
+pattern_num：采样通道数，这里是2
+
+
+除了这些外，还有一个adc_pattern需要为每个ADC IO配置衰减、通道号、adc单元等采样配置
+adc_pattern.atten：衰减
+adc_pattern.channel：对应的adc通道
+adc_pattern.unit：对应的adc单元
+adc_pattern.bit_width：位宽
+
+adc_pattern需要为每个进行dma传输的adc进行配置
+    */
+adc_continuous_config_t dig_cfg = {
+    .sample_freq_hz = 20 * 1000,
+    .conv_mode = ADC_CONV_SINGLE_UNIT_1,
+    .format = ADC_DIGI_OUTPUT_FORMAT_TYPE2,
+    .pattern_num = 2,
+};
+
+// 这里来配置adc_pattern，与adc单独使用时的参数一致
+adc_digi_pattern_config_t adc_pattern[SOC_ADC_PATT_LEN_MAX] = {0};
+for (int i = 0; i < channel_num; i++)
+{
+    adc_pattern[i].atten = ADC_ATTEN_DB_11;
+    adc_pattern[i].channel = channel[i] & 0x7;
+    adc_pattern[i].unit = ADC_UNIT_1;
+    adc_pattern[i].bit_width = ADC_BITWIDTH_12;
+
+    ESP_LOGI(TAG, "adc_pattern[%d].atten is :%" PRIx8, i, adc_pattern[i].atten);
+    ESP_LOGI(TAG, "adc_pattern[%d].channel is :%" PRIx8, i, adc_pattern[i].channel);
+    ESP_LOGI(TAG, "adc_pattern[%d].unit is :%" PRIx8, i, adc_pattern[i].unit);
+}
+// 然后完成配置并进行初始化
+dig_cfg.adc_pattern = adc_pattern;
+adc_continuous_config(handle, &dig_cfg);
+
+```
 
 ## I2C【暂无】
 
@@ -736,6 +882,6 @@ esp_mqtt_client_publish(client, "topic1", "topic1_data", 0, 0, 0);
 
 ## 电源管理【暂无】
 
-### wifi与省电模式【暂无】
+### WIFI与省电模式【暂无】
 
 ## 控制台【暂无】

@@ -4,6 +4,10 @@
 
 所有例程都在`example`目录下，单文件且仅保留最少的必要代码，并给出了API的必要的注释。
 
+**版本为esp-idf - 5.0，与5.2有显著差异的部分会指出来，比如I2C相关内容**
+
+**所有示例均可在esp32c3上成功运行，部分与其他型号芯片有差异时会指出，比如ADC部分**
+
 # 与官方文档示例有什么区别？
 
 官方文档罗列出了所有的API片段，仅参考文档经常容易产生：**我应该用哪个API？只用这个API就够了吗？需不需要其他的操作**？的挠头疑惑
@@ -52,10 +56,14 @@
   * [UART](./Reference.md#uart)
     * [直接使用串口](./Reference.md#直接使用串口)
     * [通过事件来使用串口](./Reference.md#通过事件来使用串口)
-  * [ADC【暂无】](./Reference.md#adc【暂无】)
-  * [IIC【暂无】](./Reference.md#iic【暂无】)
+  * [ADC](./Reference.md#adc)
+    * [无DMA的采样与校准](./Reference.md#无dma的采样与校准)
+    * [通过DMA的连续采样](./Reference.md#通过dma的连续采样)
+  * [I2C【暂无】](./Reference.md#i2c【暂无】)
   * [DAC【暂无】](./Reference.md#dac【暂无】)
   * [SPI【暂无】](./Reference.md#spi【暂无】)
+  * [I2S【暂无】](./Reference.md#i2s【暂无】)
+  * [USB【暂无】](./Reference.md#usb【暂无】)
 * [无线通信](./Reference.md#无线通信)
   * [WIFI](./Reference.md#wifi)
     * [AP](./Reference.md#ap)
@@ -77,5 +85,5 @@
 * [杂项](./Reference.md#杂项)
   * [事件循环机制【暂无】](./Reference.md#事件循环机制【暂无】)
   * [电源管理【暂无】](./Reference.md#电源管理【暂无】)
-    * [wifi与省电模式【暂无】](./Reference.md#wifi与省电模式【暂无】)
+    * [WIFI与省电模式【暂无】](./Reference.md#wifi与省电模式【暂无】)
   * [控制台【暂无】](./Reference.md#控制台【暂无】)
