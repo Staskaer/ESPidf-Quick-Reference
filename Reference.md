@@ -660,6 +660,10 @@ adc_continuous_config(handle, &dig_cfg);
 
 ```
 
+## USB【搁置】
+
+因为esp32C3上的USB只用于烧录固件和调试，不支持通用USB功能开发，而手上又没有esp32s2之类的板子，没法验证，所以这里先搁置了。
+
 ## I2C【暂无】
 
 ## DAC【暂无】
@@ -667,8 +671,6 @@ adc_continuous_config(handle, &dig_cfg);
 ## SPI【暂无】
 
 ## I2S【暂无】
-
-## USB【暂无】
 
 
 # 无线通信
