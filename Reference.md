@@ -660,17 +660,49 @@ adc_continuous_config(handle, &dig_cfg);
 
 ```
 
-## USB【搁置】
+## DAC
 
-因为esp32C3上的USB只用于烧录固件和调试，不支持通用USB功能开发，而手上又没有esp32s2之类的板子，没法验证，所以这里先搁置了。
+**esp32c3没有DAC，所以此例程基于esp32**。DAC只需要指定对应的通道即可完成配置，然后就可以不断写入8位数据来表示输出电压；另外DAC还有一个余弦发生器可以用来生成正弦波，可以参考[例子](./example/basic/DAC.c)
+
+```c
+#include "driver/dac.h"
+
+// 初始化对应通道
+dac_output_enable(DAC_CHANNEL_2);
+
+// 写入数据
+dac_output_voltage(DAC_CHANNEL_2, 0x7f);
+
+
+// 使用余弦发生器
+dac_cw_config_t config = {
+    // 使用DAC通道1
+    .en_ch = DAC_CHANNEL_1,
+    // 10KHz正弦波
+    .freq = 10000,
+    // DAC_CW_SCALE_1、2、4、8表示赋值分别为3.3v的1/n倍
+    // 这里的赋值是不变
+    .scale = DAC_CW_SCALE_1,
+    // 相位为0，可选DAC_CW_PHASE_0、DAC_CW_PHASE_180
+    .phase = DAC_CW_PHASE_0,
+};
+dac_cw_generator_config(&config);
+// 打开余弦波发生器
+dac_cw_generator_enable();
+// 使能通道
+dac_output_enable(DAC_CHANNEL_1);
+```
+
 
 ## I2C【暂无】
-
-## DAC【暂无】
 
 ## SPI【暂无】
 
 ## I2S【暂无】
+
+## USB【搁置】
+
+因为esp32C3上的USB只用于烧录固件和调试，不支持通用USB功能开发，而手上又没有esp32s2之类的板子，没法验证，所以这里先搁置了。
 
 
 # 无线通信
@@ -762,9 +794,11 @@ if (err != 0)
 
 同上，与UDP-Client十分类似，可以参考[例子](./example/wireles/socket/UDP_server.c)
 
-## 蓝牙【暂无】
-
 ## ESP-Now【暂无】
+
+## 蓝牙【搁置】
+
+esp32C3仅支持BLE，也就是低功耗蓝牙，但是由于我用的不多，所以暂时这部分内容也先搁置了
 
 # 应用层协议
 
