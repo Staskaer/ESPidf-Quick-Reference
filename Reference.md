@@ -699,6 +699,15 @@ dac_output_enable(DAC_CHANNEL_1);
 ```
 
 
+## I2S
+
+### STD传输模式
+
+I2S是一种数字音频接口，可以用来传输音频数据，可以参考[I2S例子](./example/basic/I2S_STD.c)，用一个i2s发送，另一个i2s接收数据。
+
+因为i2s的发送和接收的时钟是一致的，所以如果发送和接收配置时钟不同时，需要占用多个i2s。
+
+
 ## 脉冲计数【暂无】
 
 ## 红外遥控【暂无】
@@ -708,8 +717,6 @@ dac_output_enable(DAC_CHANNEL_1);
 ## I2C【暂无】
 
 ## SPI【暂无】
-
-## I2S【暂无】
 
 ## USB【搁置】
 
