@@ -61,7 +61,7 @@ vTaskDelete(xHandle1);
 ### 指定CPU创建任务
 
 
-上面那个创建不指定CPU的的API，其实是在任意一个可用CPU上创建任务，等效于此处的`tskNO_AFFINITY`参数。
+上面那个创建不指定CPU的的API，其实是在任意一个可用CPU上创建任务，等效于此处的`tskNO_AFFINITY`参数。**有浮点运算的任务务必要指定CPU**，最好wifi、蓝牙等网络IO任务一个核，剩余的任务另外一个核心。
 
 可以参考[FreeRTOS任务例子](./example/FreeRTOS/task_CPU.c)
 
