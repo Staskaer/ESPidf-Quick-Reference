@@ -27,7 +27,8 @@
 
 * [常用操作](./Reference.md#常用操作)
   * [串口日志输出](./Reference.md#串口日志输出)
-  * [延时](./Reference.md#延时)
+  * [FreeRtos的ms级延时](./Reference.md#freertos的ms级延时)
+  * [系统级us延时](./Reference.md#系统级us延时)
 * [FreeRTOS部分](./Reference.md#freertos部分)
   * [FreeRTOS任务](./Reference.md#freertos任务)
     * [不指定CPU创建任务(FreeRtos)](./Reference.md#不指定cpu创建任务freertos)
@@ -62,6 +63,7 @@
   * [DAC](./Reference.md#dac)
   * [I2S](./Reference.md#i2s)
     * [STD传输模式](./Reference.md#std传输模式)
+    * [PDM传输模式【暂无】](./Reference.md#pdm传输模式【暂无】)
   * [脉冲计数【暂无】](./Reference.md#脉冲计数【暂无】)
   * [红外遥控【暂无】](./Reference.md#红外遥控【暂无】)
   * [SDIO【暂无】](./Reference.md#sdio【暂无】)

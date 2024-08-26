@@ -14,7 +14,7 @@ ESP_LOGW(TAG, "Warn %d", 3);
 ESP_LOGE(TAG, "Error %d", 4);
 ```
 
-## 延时
+## FreeRtos的ms级延时
 
 ```c
 #include "freertos/FreeRTOS.h"
@@ -23,6 +23,14 @@ ESP_LOGE(TAG, "Error %d", 4);
 
 // 延时500ms
 vTaskDelay(500 / portTICK_PERIOD_MS);
+```
+
+## 系统级us延时
+
+```c
+#include "esp32/rom/ets_sys.h"
+
+ets_delay_us(1000);
 ```
 
 # FreeRTOS部分
@@ -707,6 +715,7 @@ I2S是一种数字音频接口，可以用来传输音频数据，可以参考[I
 
 因为i2s的发送和接收的时钟是一致的，所以如果发送和接收配置时钟不同时，需要占用多个i2s。
 
+### PDM传输模式【暂无】
 
 ## 脉冲计数【暂无】
 
