@@ -358,6 +358,8 @@ static void GPIO_init(void)
 
 硬件定时器资源很少，类似stm32的基本定时器，只能计数，比如ESP32内置4个64-bit通用定时器。每个定时器包含一个16-bit预分频器和一个64-bit可自动重新加载向上／向下计数器。
 
+其他比如led pwm也会占用定时器资源，所以在使用时要注意。
+
 
 参见[硬件定时器例子](./example/basic/TIM_hardware.c)
 
@@ -696,6 +698,12 @@ dac_cw_generator_enable();
 dac_output_enable(DAC_CHANNEL_1);
 ```
 
+
+## 脉冲计数【暂无】
+
+## 红外遥控【暂无】
+
+## SDIO【暂无】
 
 ## I2C【暂无】
 
