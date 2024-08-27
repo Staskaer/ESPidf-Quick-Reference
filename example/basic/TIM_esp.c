@@ -22,6 +22,16 @@ void app_main(void)
     const esp_timer_create_args_t periodic_timer_args = {
         /*设置回调函数*/
         .callback = &periodic_timer_callback,
+        /*使用timer任务来调度中断，所有中断任务都会被同1给timer任务调度
+        因此需要避免在中断里处理太多任务
+        如果设置成ESP_TIMER_ISR就不经过timer任务直接从中断源触发中断
+        但是需要启用CONFIG_ESP_TIMER_SUPPORTS_ISR_DISPATCH_METHOD定义
+        */
+        .dispatch_method = ESP_TIMER_TASK,
+        /*如果等待处理中断的时间太长，导致第二个中断到来了第一个中断还没有触发的话
+        设置成true，第二个中断会被丢弃，设置成false，第二个中断会被处理
+         */
+        .skip_unhandled_events = false,
         /*设置回调函数的参数*/
         .arg = (void *)count,
         .name = "periodic"};
