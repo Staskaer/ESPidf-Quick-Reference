@@ -4,7 +4,7 @@
 
 所有例程都在`example`目录下，单文件且仅保留最少的必要代码，并给出了API的必要的注释。
 
-**版本为esp-idf - 5.0，与5.2有显著差异的部分会指出来，比如I2C相关内容**
+**版本为esp-idf - 5.0，与5.2有显著差异的部分会指出来，比如I2C、DAC相关内容**
 
 **所有示例均可在esp32c3上成功运行，部分与其他型号芯片有差异时会指出，比如ADC部分**
 
@@ -64,10 +64,10 @@
   * [I2S](./Reference.md#i2s)
     * [STD传输模式](./Reference.md#std传输模式)
     * [PDM传输模式【暂无】](./Reference.md#pdm传输模式【暂无】)
+  * [I2C](./Reference.md#i2c)
   * [脉冲计数【暂无】](./Reference.md#脉冲计数【暂无】)
   * [红外遥控【暂无】](./Reference.md#红外遥控【暂无】)
   * [SDIO【暂无】](./Reference.md#sdio【暂无】)
-  * [I2C【暂无】](./Reference.md#i2c【暂无】)
   * [SPI【暂无】](./Reference.md#spi【暂无】)
   * [USB【搁置】](./Reference.md#usb【搁置】)
 * [无线通信](./Reference.md#无线通信)

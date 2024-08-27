@@ -677,6 +677,8 @@ adc_continuous_config(handle, &dig_cfg);
 
 **esp32c3没有DAC，所以此例程基于esp32**。DAC只需要指定对应的通道即可完成配置，然后就可以不断写入8位数据来表示输出电压；另外DAC还有一个余弦发生器可以用来生成正弦波，可以参考[例子](./example/basic/DAC.c)
 
+**DAC在idf5.0-->idf5.1的更新中有较大变化，主要是API名字发生改变，但是此代码仍然有效(会弹warning)**
+
 ```c
 #include "driver/dac.h"
 
@@ -717,13 +719,55 @@ I2S是一种数字音频接口，可以用来传输音频数据，可以参考[I
 
 ### PDM传输模式【暂无】
 
+## I2C
+
+I2C直接配置好主机从机然后调用相关API发送接收即可。注意对于从机而言，无论接收还是发送，数据都会进入到buffer中。主机的发送和接收不需要自己去控制总线然后按照I2C的协议发送，已经有完整封装好的API可以调用，而且在idf5.3中已经删除了控制总线相关的API。可以参见[I2C例子](./example/basic/I2C.c)
+
+**DAC在idf5.1-->idf5.2的更新中有较大变化，但是此代码仍然有效**
+
+```c
+#include "driver/i2c.h"
+
+static void i2c_master_init(void)
+{
+    i2c_config_t conf = {
+        /*i2c的主机模式*/
+        .mode = I2C_MODE_MASTER,
+        /*sda的管脚以及是否启用上拉，如果这里不启用，就要自己额外接一个上拉电阻*/
+        .sda_io_num = MasterSDA,
+        .sda_pullup_en = GPIO_PULLUP_ENABLE,
+        /*clk的管脚以及上拉*/
+        .scl_io_num = MasterCLK,
+        .scl_pullup_en = GPIO_PULLUP_ENABLE,
+        /*主时钟频率*/
+        .master.clk_speed = 400000,
+        /*选择时钟源
+        I2C_SCLK_SRC_FLAG_FOR_NOMAL是自动选择时钟
+        I2C_SCLK_SRC_FLAG_AWARE_DFS是选择REF参考时钟源，不随APB时钟源改变
+        I2C_SCLK_SRC_FLAG_LIGHT_SLEEP是选择睡眠模式下的时钟
+        */
+        .clk_flags = I2C_SCLK_SRC_FLAG_FOR_NOMAL,
+    };
+    /*初始化i2c*/
+    i2c_param_config(I2C_NUM_0, &conf);
+    /*安装i2c的驱动
+    第三第四个参数是从机的rx和tx的buffer，主机无效
+    最后一个参数是中断相关，不用管
+    */
+    i2c_driver_install(I2C_NUM_0, I2C_MODE_MASTER, 0, 0, 0);
+}
+
+// 写指令
+i2c_master_write_to_device(I2C_NUM_0, 0x28, data, 5, 1000 / portTICK_PERIOD_MS);
+// 读指令
+i2c_master_read_from_device(I2C_NUM_0, 0x28, data, 5, 1000 / portTICK_PERIOD_MS);
+```
+
 ## 脉冲计数【暂无】
 
 ## 红外遥控【暂无】
 
 ## SDIO【暂无】
-
-## I2C【暂无】
 
 ## SPI【暂无】
 
