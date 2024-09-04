@@ -93,6 +93,8 @@ void i2s_init_std_simplex(void)
     // 因为i2s不同声道的数据对应的ws是不同的
     // 所以需要指定是全部接收还是只接收某个声道数据
     rx_std_cfg.slot_cfg.slot_mask = I2S_STD_SLOT_BOTH;
+    /*如果设置为24bit的数据的话，需要重新设置下时钟，否则ws会不准确，并且初始化失败*/
+    // rx_std_cfg.clk_cfg.mclk_multiple=I2S_MCLK_MULTIPLE_384;
     i2s_channel_init_std_mode(rx_chan, &rx_std_cfg);
 }
 
